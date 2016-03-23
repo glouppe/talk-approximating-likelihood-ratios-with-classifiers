@@ -121,7 +121,7 @@ Gilles Louppe\\
 
     \vspace{1em}
 
-    Because of the curse of dimensionality, this is a too difficult problem!
+    Works fine for low-dimensional data, but because of the curse of dimensionality, this is in general too difficult a problem!
 
     $$
       \mathnode{A}{  \frac{ p_\mathbf{X}(\mathbf{x}|\theta_0)}{ p_\mathbf{X}(\mathbf{x}|\theta_1)} } = \mathnode{B}{ r(\mathbf{x};\theta_0,\theta_1)}
@@ -144,7 +144,7 @@ Gilles Louppe\\
     \frametitle{Approximating likelihood ratios with classifiers}
 
     \begin{itemize}
-        \item The likelihood ratio is invariant under the change of variable $\mathbf{U} = s(\mathbf{X})$, provided $s(\mathbf{x})$ is monotonic with $r(\mathbf{x})$.
+        \item Theorem: The likelihood ratio is invariant under the change of variable $\mathbf{U} = s(\mathbf{X})$, provided $s(\mathbf{x})$ is monotonic with $r(\mathbf{x})$.
 
         $$
         r(\mathbf{x};\theta_0,\theta_1) = \frac{ p_\mathbf{X}(\mathbf{x}|\theta_0)}{ p_\mathbf{X}(\mathbf{x}|\theta_1)} = \frac{ p_\mathbf{U}(s(\mathbf{x})|\theta_0)}{ p_\mathbf{U}(s(\mathbf{x})|\theta_1)}
@@ -161,7 +161,7 @@ Gilles Louppe\\
 \begin{frame}
     \frametitle{Inference and composite hypothesis testing}
 
-    Approximated likelihood ratios can be used for inference, as
+    Approximated likelihood ratios can be used for inference, since
 
     {\small
     \begin{align}\label{eqn:mle}
@@ -185,7 +185,7 @@ Gilles Louppe\\
     \begin{itemize}
         \item One could build a classifier $s$ independently for all $\theta, \theta_1$. But this is computationally expensive and would not guarantee a smooth evolution of $s(\mathbf{x}; \theta, \theta_1)$ as $\theta$ varies.
 
-        \item Solution: build a single parameterized classifier instead, where parameters are defined as additional input features.
+        \item Solution: build a single parameterized classifier instead, where parameters are additional input features~\citep{Baldi:2016fzo}.
     \end{itemize}
 
     {\scriptsize
@@ -235,6 +235,12 @@ Gilles Louppe\\
     \end{column}
 \end{columns}
 
+\vspace{2em}
+
+\centering
+\includegraphics[height=0.8em]{figures/github.png}~ {\it \small Check out \citep{carl} to reproduce this example.}
+\vspace{-1em}
+
 \end{frame}
 
 \begin{frame}
@@ -265,15 +271,15 @@ Gilles Louppe\\
 
 
     \begin{columns}
-      \begin{column}[t]{0.48\textwidth}
+      \begin{column}[b]{0.48\textwidth}
         \centering
         \small Exact $-2 \log \Lambda(\alpha, \beta )$\\
         \vspace{0.5em}
         \includegraphics[height=10em]{figures/fig5a.pdf}
       \end{column}
-      \begin{column}[t]{0.48\textwidth}
+      \begin{column}[b]{0.48\textwidth}
           \centering
-          \small GP surrogate of the approx. LLR\\
+          \small Approx. LLR (smoothed by a Gaussian Process)\\
           \vspace{0.5em}
           \includegraphics[height=10em]{figures/fig5c.pdf}
       \end{column}
@@ -306,8 +312,25 @@ Gilles Louppe\\
     \bibliography{biblio}}
 \end{frame}
 
+\begin{frame}[plain,noframenumbering]
+    \vfill
+    \centering
+    \it Backup slides
+    \vfill
+\end{frame}
 
 
+\begin{frame}[plain,noframenumbering]
+    \frametitle{Likelihood ratio of mixtures}
+\end{frame}
+
+\begin{frame}[plain,noframenumbering]
+    \frametitle{Diagnostics}
+\end{frame}
+
+\begin{frame}[plain,noframenumbering]
+    \frametitle{Applications in High Energy Physics}
+\end{frame}
 
 
 \end{document}
