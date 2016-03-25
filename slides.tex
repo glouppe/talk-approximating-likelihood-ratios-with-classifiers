@@ -87,7 +87,7 @@ Gilles Louppe\\
     \begin{itemize}
         \item Complex simulator $p$ parameterized by $\theta$;
         \item Samples $\mathbf{x} \sim p$ can be generated on-demand;
-        \item ... but the likelihood $p(\mathbf{x}|\theta)$ cannot be evaluated!
+        \item ... but the likelihood {\color{red} $p(\mathbf{x}|\theta)$ cannot be evaluated}!
     \end{itemize}
 
     \centering
@@ -121,7 +121,7 @@ Gilles Louppe\\
 
     \vspace{1em}
 
-    Works fine for low-dimensional data, but because of the curse of dimensionality, this is in general too difficult a problem!
+    Works fine for low-dimensional data, but because of the curse of dimensionality, this is in general a difficult problem! Moreover, {\color{red} it is not even necessary}!
 
     $$
       \mathnode{A}{  \frac{ p_\mathbf{X}(\mathbf{x}|\theta_0)}{ p_\mathbf{X}(\mathbf{x}|\theta_1)} } = \mathnode{B}{ r(\mathbf{x};\theta_0,\theta_1)}
@@ -136,7 +136,7 @@ Gilles Louppe\\
 
     \vspace{1em}
 
-    {\centering \it When solving a problem of interest, do not solve a more general problem as an intermediate step. -- Vladimir Vapnik}
+    {\small \centering \it When solving a problem of interest, do not solve a more general problem as an intermediate step. -- Vladimir Vapnik}
 
 \end{frame}
 
@@ -294,6 +294,20 @@ Gilles Louppe\\
 
 
 \begin{frame}
+    \frametitle{Application to Higgs EFT}
+
+    \begin{itemize}
+        \item Ongoing effort using the outlined method for estimating coupling parameters for Higgs EFT.
+        \item In case of mixtures (as for Higgs EFT), the LR estimation problem can be rewritten as pairwise LR estimation problems (see backup slides).
+    \end{itemize}
+
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/eft1.png}\\
+    {\it \small Preliminary results}
+\end{frame}
+
+
+\begin{frame}
     \frametitle{Summary}
 
     \begin{itemize}
@@ -323,13 +337,10 @@ Gilles Louppe\\
 \begin{frame}[plain,noframenumbering]
     \frametitle{Likelihood ratio of mixtures}
 
-    For models defined as known mixtures of several components, i.e. when $p(\mathbf{x}|\theta)$ can be written as
-    {\scriptsize
-    \begin{equation*}
-    p(\mathbf{x}|\theta)=\sum_c w_c(\theta) p_c(\mathbf{x}| \theta),
-    \end{equation*}}
-    the target likelihood ratio can be formulated in terms of pairwise
-    approximations of likelihood ratios. Specifically, we can write
+    For models defined as known mixtures of several components,
+    the target LR can be formulated in terms of pairwise
+    approximations of sub-LRs. Specifically, we can write
+
     {\scriptsize
     \begin{align*}
     \frac{p(\mathbf{x}|\theta_0)}{p(\mathbf{x}|\theta_1)} &= \frac{\sum_c w_c(\theta_0) p_c(\mathbf{x}| \theta_0)}{\sum_{c'} w_{c'}(\theta_1) p_{c'}(\mathbf{x}| \theta_1)} \nonumber \\
@@ -338,6 +349,10 @@ Gilles Louppe\\
     \end{align*}}
 
     This allows to focus the capacity of the classifiers on simpler problems, resulting in better approximations.
+
+    \vspace{1em}
+
+    In the common case where free parameters only concern the component weights, sub-LRs can all be precomputed before fitting!
 
 \end{frame}
 
@@ -358,10 +373,6 @@ Gilles Louppe\\
             \includegraphics[clip, trim=0.3cm 0.3cm 0.3cm 0.3cm,height=9.5em]{figures/ROC_comp2.pdf}
     \end{center}
 
-\end{frame}
-
-\begin{frame}[plain,noframenumbering]
-    \frametitle{Applications in High Energy Physics}
 \end{frame}
 
 
