@@ -147,10 +147,10 @@ Gilles Louppe\\
         \item Theorem: The likelihood ratio is invariant under the change of variable $\mathbf{U} = s(\mathbf{X})$, provided $s(\mathbf{x})$ is monotonic with $r(\mathbf{x})$.
 
         $$
-        r(\mathbf{x};\theta_0,\theta_1) = \frac{ p_\mathbf{X}(\mathbf{x}|\theta_0)}{ p_\mathbf{X}(\mathbf{x}|\theta_1)} = \frac{ p_\mathbf{U}(s(\mathbf{x})|\theta_0)}{ p_\mathbf{U}(s(\mathbf{x})|\theta_1)}
+        r(\mathbf{x}) = \frac{ p_\mathbf{X}(\mathbf{x}|\theta_0)}{ p_\mathbf{X}(\mathbf{x}|\theta_1)} = \frac{ p_\mathbf{U}(s(\mathbf{x})|\theta_0)}{ p_\mathbf{U}(s(\mathbf{x})|\theta_1)}
         $$
 
-        \item Well, a classifier trained to distinguish $\mathbf{x} \sim p_0$ from $\mathbf{x} \sim p_1$ yields a decision function $s(\mathbf{x})$ which is monotonic with $r(\mathbf{x})$.
+        \item Well, a classifier trained to distinguish $\mathbf{x} \sim p_0$ from $\mathbf{x} \sim p_1$ approximates $$s^*(\mathbf{x}) = \frac{p_\mathbf{X}(\mathbf{x}|\theta_1)}{p_\mathbf{X}(\mathbf{x}|\theta_0) + p_\mathbf{X}(\mathbf{x}|\theta_1)},$$ which is monotonic with $r(\mathbf{x})$.
 
         \item Estimating $p(s(\mathbf{x})|\theta)$ is now easy, since the change of variable $s(\mathbf{x})$ projects $\mathbf{x}$ in a 1D space, where only the informative content of the ratio is preserved.
 
@@ -185,7 +185,7 @@ Gilles Louppe\\
     \begin{itemize}
         \item One could build a classifier $s$ independently for all $\theta, \theta_1$. But this is computationally expensive and would not guarantee a smooth evolution of $s(\mathbf{x}; \theta, \theta_1)$ as $\theta$ varies.
 
-        \item Solution: build a single parameterized classifier instead, where parameters are additional input features~\citep{Baldi:2016fzo}.
+        \item Solution: build a single parameterized classifier instead, where parameters are additional input features~\citep{cranmer2015approximating,Baldi:2016fzo}.
     \end{itemize}
 
     {\scriptsize
@@ -292,13 +292,54 @@ Gilles Louppe\\
 
 \end{frame}
 
+\begin{frame}[plain,noframenumbering]
+    \frametitle{Diagnostics}
+
+    In practice $\hat{r}(\hat{s}(\mathbf{x}; \theta_0, \theta_1))$ will not be exact.  Diagnostic procedures are needed to assess the quality of this approximation.
+
+    \begin{enumerate}
+        \item For inference, the value of the MLE $\hat{\theta}$ should be independent of the value of $\theta_1$ used in the denominator of the ratio.
+        \item Train a classifier to distinguish between unweighted samples from $p(\mathbf{x}|\theta_0)$ and samples from $p(\mathbf{x}|\theta_1)$ weighted by $\hat{r}(\hat{s}(\mathbf{x}; \theta_0, \theta_1))$.
+    \end{enumerate}
+
+    \vspace{-2em}
+
+    \begin{center}
+            \includegraphics[clip, trim=0.3cm 0.3cm 0.3cm 0.3cm,height=10.075em]{figures/likelihood_comp_2.pdf}
+            \includegraphics[clip, trim=0.3cm 0.3cm 0.3cm 0.3cm,height=9.5em]{figures/ROC_comp2.pdf}
+    \end{center}
+
+\end{frame}
+
+\begin{frame}[plain,noframenumbering]
+    \frametitle{Likelihood ratio of mixtures}
+
+    For models defined as known mixtures of several components,
+    the target LR can be formulated in terms of pairwise
+    approximations of sub-LRs. Specifically, we can write
+
+    {\scriptsize
+    \begin{align*}
+    \frac{p(\mathbf{x}|\theta_0)}{p(\mathbf{x}|\theta_1)} &= \frac{\sum_c w_c(\theta_0) p_c(\mathbf{x}| \theta_0)}{\sum_{c'} w_{c'}(\theta_1) p_{c'}(\mathbf{x}| \theta_1)} \nonumber \\
+    &= \sum_c \left[ \sum_{c'} \frac{ w_{c'}(\theta_1)}{w_c(\theta_0)} \frac{ p_{c'}(\mathbf{x}| \theta_1)}{  p_c(\mathbf{x}| \theta_0)}  \right]^{-1} \nonumber \\
+    &= \sum_c \left[ \sum_{c'} \frac{ w_{c'}(\theta_1)}{w_c(\theta_0)} \frac{ p_{c'}(s_{c,c'}(\mathbf{x};\theta_0, \theta_1)| \theta_1)}{ p_c(s_{c,c'}(\mathbf{x};\theta_0, \theta_1)| \theta_0)}  \right]^{-1}. \label{eq:decomposedResult}
+    \end{align*}}
+
+    This allows to focus the capacity of the classifiers on simpler problems, resulting in better approximations.
+
+    \vspace{1em}
+
+    In the common case where free parameters only concern the component weights, sub-LRs can all be precomputed before fitting!
+
+\end{frame}
+
 
 \begin{frame}
     \frametitle{Application to Higgs EFT}
 
     \begin{itemize}
         \item Ongoing effort using the outlined method for estimating coupling parameters for Higgs EFT.
-        \item In case of mixtures (as for Higgs EFT), the LR estimation problem can be rewritten as pairwise LR estimation problems (see backup slides).
+        \item In case of mixtures (as for Higgs EFT), the LR estimation problem can be rewritten as pairwise LR estimation problems.
     \end{itemize}
 
     \centering
@@ -324,55 +365,6 @@ Gilles Louppe\\
     {\footnotesize
     \bibliographystyle{apalike}
     \bibliography{biblio}}
-\end{frame}
-
-\begin{frame}[plain,noframenumbering]
-    \vfill
-    \centering
-    \it Backup slides
-    \vfill
-\end{frame}
-
-
-\begin{frame}[plain,noframenumbering]
-    \frametitle{Likelihood ratio of mixtures}
-
-    For models defined as known mixtures of several components,
-    the target LR can be formulated in terms of pairwise
-    approximations of sub-LRs. Specifically, we can write
-
-    {\scriptsize
-    \begin{align*}
-    \frac{p(\mathbf{x}|\theta_0)}{p(\mathbf{x}|\theta_1)} &= \frac{\sum_c w_c(\theta_0) p_c(\mathbf{x}| \theta_0)}{\sum_{c'} w_{c'}(\theta_1) p_{c'}(\mathbf{x}| \theta_1)} \nonumber \\
-    &= \sum_c \left[ \sum_{c'} \frac{ w_{c'}(\theta_1)}{w_c(\theta_0)} \frac{ p_{c'}(\mathbf{x}| \theta_1)}{  p_c(\mathbf{x}| \theta_0)}  \right]^{-1} \nonumber \\
-    &= \sum_c \left[ \sum_{c'} \frac{ w_{c'}(\theta_1)}{w_c(\theta_0)} \frac{ p_{c'}(s_{c,c'}(\mathbf{x};\theta_0, \theta_1)| \theta_1)}{ p_c(s_{c,c'}(\mathbf{x};\theta_0, \theta_1)| \theta_0)}  \right]^{-1}. \label{eq:decomposedResult}
-    \end{align*}}
-
-    This allows to focus the capacity of the classifiers on simpler problems, resulting in better approximations.
-
-    \vspace{1em}
-
-    In the common case where free parameters only concern the component weights, sub-LRs can all be precomputed before fitting!
-
-\end{frame}
-
-\begin{frame}[plain,noframenumbering]
-    \frametitle{Diagnostics}
-
-    In practice $\hat{r}(\hat{s}(\mathbf{x}; \theta_0, \theta_1))$ will not be exact.  Diagnostic procedures are needed to assess the quality of this approximation.
-
-    \begin{enumerate}
-        \item For inference, the value of the MLE $\hat{\theta}$ should be independent of the value of $\theta_1$ used in the denominator of the ratio.
-        \item Train a classifier to distinguish between unweighted samples from $p(\mathbf{x}|\theta_0)$ and samples from $p(\mathbf{x}|\theta_1)$ weighted by $\hat{r}(\hat{s}(\mathbf{x}; \theta_0, \theta_1))$.
-    \end{enumerate}
-
-    \vspace{-2em}
-
-    \begin{center}
-            \includegraphics[clip, trim=0.3cm 0.3cm 0.3cm 0.3cm,height=10.075em]{figures/likelihood_comp_2.pdf}
-            \includegraphics[clip, trim=0.3cm 0.3cm 0.3cm 0.3cm,height=9.5em]{figures/ROC_comp2.pdf}
-    \end{center}
-
 \end{frame}
 
 
