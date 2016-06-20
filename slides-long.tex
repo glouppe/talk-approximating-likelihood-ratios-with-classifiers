@@ -9,6 +9,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{caption}
+\usepackage[normalem]{ulem}
 
 \usepackage{amsmath}
 \usepackage{tikz}
@@ -47,7 +48,8 @@
 \author{
 Gilles Louppe
 }
-\date{April 13, 2016}
+\date{June 22, 2016\\
+MLHEP, Lund}
 
 \begin{document}
 
@@ -267,22 +269,36 @@ Gilles Louppe
         \item One could build a classifier $s$ independently for all $\theta, \theta_1$. But this is computationally expensive and would not guarantee a smooth evolution of $s(\mathbf{x}; \theta, \theta_1)$ as $\theta$ varies.
 
         \item Solution: build a single parameterized classifier instead, where parameters are additional input features~\citep{cranmer2015approximating,Baldi:2016fzo}.
+
     \end{itemize}
 
-    {\scriptsize
-    \begin{algorithmic}
-        \State ${\cal T := \{ \}}$;
-        \While{ $\text{size}({\cal T}) < N $ }
-            %\State Select or draw $\theta_0$, $\theta_1$ from $\Theta_0$, $\Theta_1$;
-            \State Draw $\theta_0 \sim \pi_{\Theta_0}$;
-    	    \State Draw $\mathbf{x} \sim p(\mathbf{x}|\theta_0)$;
-    		\State ${\cal T} := {\cal T} \cup \{ ((\mathbf{x}, \theta_0, \theta_1), y=0) \}$;
-            \State Draw $\theta_1 \sim \pi_{\Theta_1}$;
-    		\State Draw $\mathbf{x} \sim p(\mathbf{x}|\theta_1)$;
-    		\State ${\cal T} := {\cal T} \cup \{ ((\mathbf{x}, \theta_0, \theta_1), y=1) \}$;
-        \EndWhile
-        \State Learn a single classifier $s(\mathbf{x}; \theta_0, \theta_1)$ from ${\cal T}$.
-    \end{algorithmic}}
+    \begin{columns}
+      \begin{column}[b]{0.48\textwidth}
+          {\scriptsize
+          \begin{algorithmic}
+              \State ${\cal T := \{ \}}$;
+              \While{ $\text{size}({\cal T}) < N $ }
+                  %\State Select or draw $\theta_0$, $\theta_1$ from $\Theta_0$, $\Theta_1$;
+                  \State Draw $\theta_0 \sim \pi_{\Theta_0}$;
+          	    \State Draw $\mathbf{x} \sim p(\mathbf{x}|\theta_0)$;
+          		\State ${\cal T} := {\cal T} \cup \{ ((\mathbf{x}, \theta_0, \theta_1), y=0) \}$;
+                  \State Draw $\theta_1 \sim \pi_{\Theta_1}$;
+          		\State Draw $\mathbf{x} \sim p(\mathbf{x}|\theta_1)$;
+          		\State ${\cal T} := {\cal T} \cup \{ ((\mathbf{x}, \theta_0, \theta_1), y=1) \}$;
+              \EndWhile
+              \State Learn a single classifier $s(\mathbf{x}; \theta_0, \theta_1)$ from ${\cal T}$.
+          \end{algorithmic}}
+      \end{column}
+      \begin{column}[b]{0.48\textwidth}
+          \centering
+          \includegraphics[width=0.5\textwidth]{figures/networks.png}
+          \vspace{1cm}
+      \end{column}
+    \end{columns}
+
+
+
+
 
 \end{frame}
 
@@ -373,7 +389,7 @@ Gilles Louppe
 
 \end{frame}
 
-\begin{frame}[plain,noframenumbering]
+\begin{frame}
     \frametitle{Diagnostics}
 
     In practice $\hat{r}(\hat{s}(\mathbf{x}; \theta_0, \theta_1))$ will not be exact.  Diagnostic procedures are needed to assess the quality of this approximation.
@@ -392,10 +408,10 @@ Gilles Louppe
 
 \end{frame}
 
-\begin{frame}[plain,noframenumbering]
+\begin{frame}
     \frametitle{Density ratio estimation}
 
-    Approximating likelihood ratios relates to many other fundamental statistical inference problems, including
+    The density ratio $r(\mathbf{x} ; \theta_0, \theta_1) = \frac{p(\mathbf{x}|\theta_0)} { p(\mathbf{x}|\theta_1) }$ appears in many other fundamental statistical inference problems, including
 
     \begin{itemize}
         \item transfer learning,
@@ -403,23 +419,71 @@ Gilles Louppe
         \item divergence estimation,
         \item ...
     \end{itemize}
+
+    {\color{red} For all of them, the proposed approximation can be used as a drop-in replacement!}
 \end{frame}
 
-\begin{frame}[plain,noframenumbering]
-    \frametitle{Transfer learning: $p_\text{train} \neq p_\text{test}$}
+\begin{frame}
+    \frametitle{Transfer learning}
 
-    As training data increases, i.e. as $N \to \infty$,
+    Under the assumption that train and test data are drawn iid from a same distribution $p$,
+    $$\frac{1}{N} \sum_{\mathbf{x}_i} L(\varphi(\mathbf{x}_i)) \to \int L(\varphi(\mathbf{x})) {\color{red} p(\mathbf{x})} d\mathbf{x}.$$
+    as training data increases, i.e. as $N \to \infty$.
 
+\end{frame}
+
+\begin{frame}
+    \frametitle{Transfer learning}
+
+    \sout{Under the assumption that train and test data are drawn iid from a same distribution $p$,}
     $$\frac{1}{N} \sum_{\mathbf{x}_i} L(\varphi(\mathbf{x}_i)) \to \int L(\varphi(\mathbf{x})) {\color{red} p_\text{train}(\mathbf{x})} d\mathbf{x}.$$
+    as training data increases, i.e. as $N \to \infty$.
 
-    We want to be good on test data, i.e., minimize
+    \vspace{1cm}
+
+    But we want to be good on test data, i.e., minimize
     $$\int L(\varphi(\mathbf{x})) {\color{blue} p_\text{test}(\mathbf{x})} d\mathbf{x}.$$
 
-    Solution: {\it importance weighting}.
-
-    $$\varphi^* = \argmin_\varphi \frac{1}{N} \sum_{\mathbf{x}_i} \frac{\color{blue} p_\text{test}(\mathbf{x}_i)}{\color{red} p_\text{train}(\mathbf{x}_i)}  L(\varphi(\mathbf{x}_i))$$
+    \textit{E.g. in HEP, train on simulated data (Monte Carlo) but apply on actual detector data.}
 \end{frame}
 
+\begin{frame}
+    \frametitle{Importance weighting}
+
+    Reweight samples by $\frac{\color{blue} p_\text{test}(\mathbf{x}_i)}{\color{red} p_\text{train}(\mathbf{x}_i)}$ and minimize
+
+    $$\frac{1}{N} \sum_{\mathbf{x}_i} \frac{\color{blue} p_\text{test}(\mathbf{x}_i)}{\color{red} p_\text{train}(\mathbf{x}_i)}  L(\varphi(\mathbf{x}_i)) \to \int L(\varphi(\mathbf{x})) {\color{red} p_\text{train}(\mathbf{x})} \frac{\color{blue}  p_\text{test}(\mathbf{x})}{\color{red} p_\text{train}(\mathbf{x})} d\mathbf{x}. $$
+
+    Again, $\frac{\color{blue} p_\text{test}(\mathbf{x}_i)}{\color{red} p_\text{train}(\mathbf{x}_i)}$ cannot be evaluated directly, but approximated likelihood ratios can be used as a drop-in replacement.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Example}
+
+    $p_0 : \alpha=-2, \beta=2$ \textit{versus}
+    $p_1 : \alpha=0, \beta=0$
+    \begin{center}
+        \includegraphics[width=0.6\textwidth]{figures/reweight1.png}
+    \end{center}
+
+    $p_0$  \textit{versus} $\frac{p_0}{p_1} p_1$
+    \begin{center}
+        \includegraphics[width=0.6\textwidth]{figures/reweight2.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Example}
+
+    $p_0$  \textit{versus} $\hat{r} p_1$
+    \begin{center}
+        \includegraphics[width=0.6\textwidth]{figures/reweight3.png}
+    \end{center}
+
+    \begin{center}
+        \includegraphics[width=0.4\textwidth]{figures/reweight4.png}
+    \end{center}
+\end{frame}
 
 \begin{frame}
     \frametitle{Summary}
