@@ -427,8 +427,13 @@ MLHEP, Lund}
     \frametitle{Transfer learning}
 
     Under the assumption that train and test data are drawn iid from a same distribution $p$,
-    $$\frac{1}{N} \sum_{\mathbf{x}_i} L(\varphi(\mathbf{x}_i)) \to \int L(\varphi(\mathbf{x})) {\color{red} p(\mathbf{x})} d\mathbf{x}.$$
+    $$\frac{1}{N} \sum_{\mathbf{x}_i} L(\varphi(\mathbf{x}_i)) \to \int L(\varphi(\mathbf{x})) {\color{red} p(\mathbf{x})} d\mathbf{x},$$
     as training data increases, i.e. as $N \to \infty$.
+
+    \vspace{1cm}
+
+    Minimizing $L$ over training data is therefore a {\color{blue} good strategy}.
+
 
 \end{frame}
 
@@ -436,7 +441,7 @@ MLHEP, Lund}
     \frametitle{Transfer learning}
 
     \sout{Under the assumption that train and test data are drawn iid from a same distribution $p$,}
-    $$\frac{1}{N} \sum_{\mathbf{x}_i} L(\varphi(\mathbf{x}_i)) \to \int L(\varphi(\mathbf{x})) {\color{red} p_\text{train}(\mathbf{x})} d\mathbf{x}.$$
+    $$\frac{1}{N} \sum_{\mathbf{x}_i} L(\varphi(\mathbf{x}_i)) \to \int L(\varphi(\mathbf{x})) {\color{red} p_\text{train}(\mathbf{x})} d\mathbf{x},$$
     as training data increases, i.e. as $N \to \infty$.
 
     \vspace{1cm}
@@ -444,15 +449,19 @@ MLHEP, Lund}
     But we want to be good on test data, i.e., minimize
     $$\int L(\varphi(\mathbf{x})) {\color{blue} p_\text{test}(\mathbf{x})} d\mathbf{x}.$$
 
-    \textit{E.g. in HEP, train on simulated data (Monte Carlo) but apply on actual detector data.}
+    Minimizing $L$ over training data is therefore a {\color{red} bad strategy}!
+
 \end{frame}
 
 \begin{frame}
     \frametitle{Importance weighting}
 
-    Reweight samples by $\frac{\color{blue} p_\text{test}(\mathbf{x}_i)}{\color{red} p_\text{train}(\mathbf{x}_i)}$ and minimize
+    Reweight samples by $\frac{\color{blue} p_\text{test}(\mathbf{x}_i)}{\color{red} p_\text{train}(\mathbf{x}_i)}$, such that
 
-    $$\frac{1}{N} \sum_{\mathbf{x}_i} \frac{\color{blue} p_\text{test}(\mathbf{x}_i)}{\color{red} p_\text{train}(\mathbf{x}_i)}  L(\varphi(\mathbf{x}_i)) \to \int L(\varphi(\mathbf{x})) {\color{red} p_\text{train}(\mathbf{x})} \frac{\color{blue}  p_\text{test}(\mathbf{x})}{\color{red} p_\text{train}(\mathbf{x})} d\mathbf{x}. $$
+    $$\frac{1}{N} \sum_{\mathbf{x}_i} \frac{\color{blue} p_\text{test}(\mathbf{x}_i)}{\color{red} p_\text{train}(\mathbf{x}_i)}  L(\varphi(\mathbf{x}_i)) \to \int \frac{\color{blue}  p_\text{test}(\mathbf{x})}{\color{red} p_\text{train}(\mathbf{x})} L(\varphi(\mathbf{x})) {\color{red} p_\text{train}(\mathbf{x})}  d\mathbf{x},$$
+    as training data increases, i.e. as $N \to \infty$.
+
+    \vspace{1cm}
 
     Again, $\frac{\color{blue} p_\text{test}(\mathbf{x}_i)}{\color{red} p_\text{train}(\mathbf{x}_i)}$ cannot be evaluated directly, but approximated likelihood ratios can be used as a drop-in replacement.
 \end{frame}
